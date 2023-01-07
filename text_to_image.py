@@ -6,7 +6,9 @@ from datetime import datetime
 
 # Load your API key from an environment variable or secret management service
 # Generate api key here: https://beta.openai.com/account/api-keys
-openai.api_key = os.getenv("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")
+
+openai.api_key = os.getenv("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")
+openai.api_key = ('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')
 
 # Constants for the output directory and output file for sentences
 OUT_DIR = 'out'
@@ -30,7 +32,8 @@ def generate_image(prompt, size):
 def save_image(url, filename):
     """Saves the image at the given URL to the specified filename.
     """
-    urllib.request.urlretrieve(url, filename)
+    with open(filename, "wb") as f:
+        f.write(urllib.request.urlopen(url).read())
 
 def save_sentence(sentence):
     """Saves the given sentence to the output file for sentences.
@@ -43,7 +46,7 @@ def save_sentence(sentence):
             raise
 
     # Append the sentence to the output file
-    with open(f"{OUT_DIR}/{OUT_SENTENCES_FILE}", 'a') as sf:
+    with open(f"{OUT_DIR}/{OUT_SENTENCES_FILE}", 'a', encoding="utf-8") as sf:
         sf.write(f"{datetime.now().strftime('%Y%m%d%H%M%S')}: {sentence}\n")
 
 def main():
@@ -72,10 +75,11 @@ def main():
                 save_sentence(prompt)
             except openai.error.InvalidRequestError as err:
                 print(f"Invalid Request Error: {err}")
-            except Exception:
-                print("Something else went wrong")
+            except Exception as e:
+                print(f"Something else went wrong: {e}")
 
             break
+
 
 if __name__ == "__main__":
     main()
