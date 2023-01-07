@@ -17,7 +17,7 @@ input_str = ''
 image_size = '1024x1024'
 image_sizes = ['256x256', '512x512', '1024x1024']
 
-# Start a loop that will run until the user give input
+# Start a loop that will run until the user gives input
 while True:
     input_str = input("Enter your request: ")
 
