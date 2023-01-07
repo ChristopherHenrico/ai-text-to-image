@@ -2,7 +2,7 @@
 
 - Clone this repository -
 ```
-$ 
+$ https://github.com/ChristopherHenrico/ai-text-to-image.git
 ```
 
 #### Requirements:
