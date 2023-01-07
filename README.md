@@ -1,6 +1,6 @@
-# A simple python openai text to image generator
+# A simple python text to image generator
 
-- Clone this repository -
+- Clone this repository
 ```
 $ https://github.com/ChristopherHenrico/ai-text-to-image.git
 ```
@@ -22,4 +22,4 @@ Execute:
 $ ./run.sh
 ```
 
-Insert text sentences and wait image generated under out dir
+Insert text and wait for the image to be generated under dir.
