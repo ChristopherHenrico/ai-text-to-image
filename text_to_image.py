@@ -7,6 +7,7 @@ from datetime import datetime
 # Load your API key from an environment variable or secret management service
 # Generate api key here: https://beta.openai.com/account/api-keys
 
+#openai.api_key = os.getenv("Your API Key Here")
 openai.api_key = ('Your API Key Here')
 
 # Constants for the output directory and output file for sentences

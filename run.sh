@@ -1,3 +1,3 @@
 #!/bin/bash
-export OPENAI_API_KEY="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"
+export OPENAI_API_KEY="Your API Key Here"
 python3 ai-text-to-image.py
