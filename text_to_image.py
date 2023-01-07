@@ -1,67 +1,81 @@
-import errno
 import os
 import openai
 import urllib.request
+import errno
 from datetime import datetime
 
 # Load your API key from an environment variable or secret management service
 # Generate api key here: https://beta.openai.com/account/api-keys
-openai.api_key = os.getenv("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")
+openai.api_key = os.getenv("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")
 
-out_dir = 'out'
-out_sentences_requested = 'sentences.txt'
+# Constants for the output directory and output file for sentences
+OUT_DIR = 'out'
+OUT_SENTENCES_FILE = 'sentences.txt'
 
-input_str = ''
-image_size = '1024x1024'
-image_sizes = ['256x256', '512x512', '1024x1024']
+# List of available image sizes
+IMAGE_SIZES = ['256x256', '512x512', '1024x1024']
 
-# Start a loop that will run until the user gives input
-while True:
-    input_str = input("Enter your request: ")
+def generate_image(prompt, size):
+    """Generates an image using the OpenAI API based on the given prompt and size.
+    
+    Returns the URL of the generated image.
+    """
+    response = openai.Image.create(
+        prompt=prompt,
+        n=1,
+        size=size
+    )
+    return response['data'][0]['url']
 
-    if input_str:
-        print("Sentence requested: {}".format(input_str))
-      
-        input_image_size = input("Enter your image size (available sizes: '256x256', '512x512', [default] '1024x1024'): ")
-        if input_image_size and input_image_size in image_sizes:
-            image_size = input_image_size
-      
-        print("Current image size: {}".format(image_size))
+def save_image(url, filename):
+    """Saves the image at the given URL to the specified filename.
+    """
+    urllib.request.urlretrieve(url, filename)
 
-        try:
-            response = openai.Image.create(
-                prompt=input_str,
-                n=1,
-                size=image_size
-            )
+def save_sentence(sentence):
+    """Saves the given sentence to the output file for sentences.
+    """
+    # Create the output directory if it does not exist
+    try:
+        os.makedirs(OUT_DIR)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
 
-            # Print the entire response object
-            print(response)
+    # Append the sentence to the output file
+    with open(f"{OUT_DIR}/{OUT_SENTENCES_FILE}", 'a') as sf:
+        sf.write(f"{datetime.now().strftime('%Y%m%d%H%M%S')}: {sentence}\n")
 
-            image_url = response['data'][0]['url']
-            print("Image url response: {}".format(image_url))
+def main():
+    while True:
+        prompt = input("Enter your request: ")
+        if prompt:
+            print(f"Sentence requested: {prompt}")
+
+            # Prompt the user for an image size
+            size = input("Enter your image size (available sizes: '256x256', '512x512', [default] '1024x1024'): ")
+            if size and size in IMAGE_SIZES:
+                image_size = size
+            else:
+                # Default to 1024x1024 if no size is provided or if the provided size is invalid
+                image_size = '1024x1024'
+            print(f"Current image size: {image_size}")
 
             try:
-                os.makedirs(out_dir)
-            except OSError as e:
-                if e.errno != errno.EEXIST:
-                    raise
+                # Generate the image
+                image_url = generate_image(prompt, image_size)
+                print(f"Image url response: {image_url}")
 
-            # current date and time
-            now = datetime.now()
-            now_str = now.strftime("%Y%m%d%H%M%S")
+                # Save the image and the sentence to the output directory
+                filename = f"{OUT_DIR}/{prompt.replace(' ', '_')}-{image_size}_{datetime.now().strftime('%Y%m%d%H%M%S')}.png"
+                save_image(image_url, filename)
+                save_sentence(prompt)
+            except openai.error.InvalidRequestError as err:
+                print(f"Invalid Request Error: {err}")
+            except Exception:
+                print("Something else went wrong")
 
-            output_str = "out/{}-{}_{}.png".format(input_str.replace(' ', '_'), image_size, now_str)
+            break
 
-            urllib.request.urlretrieve(image_url, output_str)
-
-            sentences_file = "{}/{}".format(out_dir, out_sentences_requested)
-            with open(sentences_file,'a') as sf:
-                sf.write('{}: {}\n'.format(now_str, input_str))
-
-        except openai.error.InvalidRequestError as err:
-            print("Invalid Request Error: {}".format(err))
-        except:
-            print("Something else went wrong")
-        
-        break
+if __name__ == "__main__":
+    main()
