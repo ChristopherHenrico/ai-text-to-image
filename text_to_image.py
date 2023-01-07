@@ -8,7 +8,7 @@ from pprint import pprint
 
 # Load your API key from an environment variable or secret management service
 # Generate api key here: https://beta.openai.com/account/api-keys
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("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")
 
 out_dir = 'out'
 out_sentences_requested = 'sentences.txt'
