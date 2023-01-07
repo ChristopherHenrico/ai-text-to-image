@@ -2,7 +2,7 @@
 
 - Clone this repository -
 ```
-$ git clone --depth=1 https://github.com/AlessandroPerazzetta/open_ai_text_to_image.git
+$ 
 ```
 
 #### Requirements:
